@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NutriPlan — Nutrition pour sportifs</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--green-mid:#5DCAA5;
+  --bg:#F7F6F2;--surface:#fff;
+  --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.14);
+  --text:#1A1A18;--text-muted:#6B6B65;--text-faint:#9E9E97;
+  --blue-bg:#EBF3FC;--blue-text:#1A5FA8;
+  --amber-bg:#FEF3DF;--amber-text:#8C5A0A;
+  --coral-bg:#FAEAE6;--coral-text:#8C3A22;
+  --r:12px;--rsm:8px;--pill:999px;
+  --sh:0 2px 12px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.05);
+  --sh-lg:0 8px 32px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+.shell{max-width:560px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+
+.header{display:flex;align-items:center;gap:12px;margin-bottom:2.5rem;animation:fu .4s ease both;}
+.logo-icon{width:42px;height:42px;background:var(--green);border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(29,158,117,.35);}
+.logo-icon svg{width:22px;height:22px;fill:#fff;}
+.logo-name{font-family:'DM Serif Display',serif;font-size:24px;letter-spacing:-.3px;}
+.logo-tag{font-size:11px;background:var(--green-light);color:var(--green-dark);padding:3px 10px;border-radius:var(--pill);font-weight:600;}
+.free-badge{font-size:11px;background:#E8F5E9;color:#2E7D32;padding:3px 10px;border-radius:var(--pill);font-weight:600;border:1px solid rgba(46,125,50,.2);}
+
+.stepper{display:flex;margin-bottom:2rem;background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;animation:fu .4s .1s ease both;}
+.step-btn{flex:1;padding:10px 6px;text-align:center;font-size:12px;font-weight:500;color:var(--text-faint);border:none;border-right:1px solid var(--border);font-family:'DM Sans',sans-serif;background:transparent;}
+.step-btn:last-child{border-right:none;}
+.step-btn.active{background:var(--green-light);color:var(--green-dark);}
+.step-btn.done{color:var(--green);}
+
+.screen{display:none;animation:fu .35s ease both;}
+.screen.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.screen-title{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:4px;letter-spacing:-.2px;}
+.screen-sub{font-size:14px;color:var(--text-muted);margin-bottom:1.75rem;line-height:1.5;}
+
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh);}
+.field{margin-bottom:1.25rem;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+.field input,.field select{width:100%;padding:11px 14px;border-radius:var(--rsm);border:1px solid var(--border-strong);font-size:15px;color:var(--text);background:var(--surface);font-family:'DM Sans',sans-serif;transition:border-color .15s,box-shadow .15s;appearance:none;}
+.field input:focus,.field select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.15);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rg.c1{grid-template-columns:1fr;}
+.rcard{padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--rsm);cursor:pointer;background:var(--surface);transition:all .15s;position:relative;}
+.rcard:hover{border-color:var(--green-mid);}
+.rcard.sel{border-color:var(--green);background:var(--green-light);}
+.rcard input{display:none;}
+.rcard .rl{font-size:13px;font-weight:600;color:var(--text);}
+.rcard .rd{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.rcard.sel .rl{color:var(--green-dark);}
+.rcard.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:12px;color:var(--green);font-weight:700;}
+
+.btn{width:100%;padding:13px 24px;border-radius:var(--rsm);font-size:15px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:1rem;}
+.btn-g{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(29,158,117,.3);}
+.btn-g:hover{background:var(--green-dark);transform:translateY(-1px);}
+.btn-g:active{transform:translateY(0);}
+.btn-gh{background:transparent;color:var(--text-muted);border:1.5px solid var(--border-strong);margin-top:8px;}
+.btn-gh:hover{background:var(--bg);color:var(--text);}
+
+.kcal-hero{display:flex;align-items:baseline;gap:8px;margin-bottom:1.25rem;}
+.kcal-num{font-family:'DM Serif Display',serif;font-size:52px;color:var(--green);letter-spacing:-1px;line-height:1;}
+.kcal-unit{font-size:18px;color:var(--text-muted);}
+.mpills{display:flex;gap:10px;margin-bottom:1.25rem;}
+.mp{flex:1;padding:12px 10px;border-radius:var(--rsm);text-align:center;}
+.mp.p{background:var(--blue-bg);}
+.mp.g{background:var(--amber-bg);}
+.mp.l{background:var(--coral-bg);}
+.mp .mv{font-size:22px;font-weight:700;}
+.mp.p .mv{color:var(--blue-text);}
+.mp.g .mv{color:var(--amber-text);}
+.mp.l .mv{color:var(--coral-text);}
+.mp .mn{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+.mp.p .mn{color:var(--blue-text);}
+.mp.g .mn{color:var(--amber-text);}
+.mp.l .mn{color:var(--coral-text);}
+.bw{margin-bottom:1rem;}
+.bl{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px;}
+.bt{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;display:flex;}
+.bt div{height:100%;transition:width .6s cubic-bezier(.22,.61,.36,1);}
+.bmr-r{display:flex;justify-content:space-between;font-size:13px;padding-top:10px;border-top:1px solid var(--border);margin-top:4px;}
+.bmr-r span:first-child{color:var(--text-muted);}
+.bmr-r span:last-child{font-weight:600;}
+.snote{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 var(--rsm) var(--rsm) 0;padding:10px 14px;font-size:12px;color:var(--green-dark);margin-top:12px;line-height:1.5;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.5rem;}
+.tag{background:var(--green-light);color:var(--green-dark);font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--pill);}
+
+.frow{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;}
+.fbtn{padding:6px 14px;border-radius:var(--pill);font-size:13px;font-weight:500;border:1.5px solid var(--border-strong);background:var(--surface);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;color:var(--text-muted);}
+.fbtn:hover{border-color:var(--green-mid);}
+.fbtn.act{background:var(--green-light);border-color:var(--green);color:var(--green-dark);}
+
+.rc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem;box-shadow:var(--sh);transition:box-shadow .2s,transform .2s;}
+.rc:hover{box-shadow:var(--sh-lg);transform:translateY(-2px);}
+.rc-img{width:100%;height:175px;object-fit:cover;display:block;background:var(--green-light);}
+.rc-body{padding:1.1rem 1.25rem;}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.rc-name{font-size:16px;font-weight:600;color:var(--text);line-height:1.3;}
+.rc-meta{font-size:12px;color:var(--text-muted);margin-top:3px;}
+.rc-kcal{background:var(--green-light);color:var(--green-dark);font-size:13px;font-weight:700;padding:5px 12px;border-radius:var(--pill);white-space:nowrap;flex-shrink:0;margin-left:8px;}
+.est{display:inline-block;font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:2px 8px;border-radius:var(--pill);margin-bottom:10px;font-weight:500;}
+.rc-macros{display:flex;gap:14px;margin-bottom:12px;}
+.rm{font-size:13px;color:var(--text-muted);}
+.rm strong{color:var(--text);font-weight:600;}
+.ing-s{border-top:1px solid var(--border);padding-top:10px;}
+.ing-l{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:8px;}
+.ings{display:flex;flex-wrap:wrap;gap:6px;}
+.ing{font-size:12px;background:var(--bg);color:var(--text-muted);padding:4px 10px;border-radius:var(--pill);border:1px solid var(--border);}
+
+.footer{text-align:center;margin-top:3rem;font-size:12px;color:var(--text-faint);}
+@media(max-width:480px){.row2{grid-template-columns:1fr;}.mpills{flex-direction:column;}.kcal-num{font-size:40px;}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="header">
+  <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.82a1 1 0 001.69 1.06C7 19 9 17 12 17c4 0 5-2 8-2 0-5-1-9-3-7z"/></svg></div>
+  <span class="logo-name">NutriPlan</span>
+  <span class="logo-tag">Nutrition sportive</span>
+  <span class="free-badge">100% gratuit</span>
+</div>
+
+<div class="stepper">
+  <div class="step-btn active" id="tab1">1 · Profil</div>
+  <div class="step-btn" id="tab2">2 · Objectif</div>
+  <div class="step-btn" id="tab3">3 · Résultats</div>
+  <div class="step-btn" id="tab4">4 · Recettes</div>
+</div>
+
+<!-- S1 -->
+<div class="screen active" id="s1">
+  <p class="screen-title">Ton profil physique</p>
+  <p class="screen-sub">Ces données servent au calcul Harris-Benedict pour estimer ton métabolisme de base.</p>
+  <div class="card">
+    <div class="row2">
+      <div class="field"><label>Prénom</label><input type="text" id="prenom" placeholder="Lucas"/></div>
+      <div class="field"><label>Âge</label><input type="number" id="age" placeholder="26" min="15" max="80"/></div>
+    </div>
+    <div class="field">
+      <label>Sexe biologique</label>
+      <div class="rg">
+        <label class="rcard sel"><input type="radio" name="sexe" value="homme" checked/><div class="rl">Homme</div></label>
+        <label class="rcard"><input type="radio" name="sexe" value="femme"/><div class="rl">Femme</div></label>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Poids (kg)</label><input type="number" id="poids" placeholder="75" min="30" max="250"/></div>
+      <div class="field"><label>Taille (cm)</label><input type="number" id="taille" placeholder="178" min="100" max="250"/></div>
+    </div>
+  </div>
+  <button class="btn btn-g" onclick="goStep(2)">Continuer →</button>
+</div>
+
+<!-- S2 -->
+<div class="screen" id="s2">
+  <p class="screen-title">Tes objectifs</p>
+  <p class="screen-sub">Le ratio protéique est calibré scientifiquement pour chaque objectif.</p>
+  <div class="card">
+    <div class="field">
+      <label>Niveau d'activité physique</label>
+      <div class="rg c1">
+        <label class="rcard"><input type="radio" name="activite" value="1.2"/><div class="rl">Sédentaire</div><div class="rd">Peu ou pas d'exercice · bureau</div></label>
+        <label class="rcard"><input type="radio" name="activite" value="1.375"/><div class="rl">Légèrement actif</div><div class="rd">1–3 séances par semaine</div></label>
+        <label class="rcard sel"><input type="radio" name="activite" value="1.55" checked/><div class="rl">Modérément actif</div><div class="rd">3–5 séances par semaine</div></label>
+        <label class="rcard"><input type="radio" name="activite" value="1.725"/><div class="rl">Très actif</div><div class="rd">6–7 séances par semaine</div></label>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="field">
+      <label>Objectif fitness</label>
+      <div class="rg">
+        <label class="rcard"><input type="radio" name="objectif" value="perte"/><div class="rl">Perte de poids</div><div class="rd">Déficit 500 kcal · 1,9 g/kg</div></label>
+        <label class="rcard sel"><input type="radio" name="objectif" value="masse" checked/><div class="rl">Prise de masse</div><div class="rd">Surplus 300 kcal · 2,0 g/kg</div></label>
+        <label class="rcard"><input type="radio" name="objectif" value="maintenance"/><div class="rl">Maintenance</div><div class="rd">Équilibre · 1,6 g/kg</div></label>
+        <label class="rcard"><input type="radio" name="objectif" value="performance"/><div class="rl">Performance</div><div class="rd">Surplus 200 kcal · 1,4 g/kg</div></label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Régime alimentaire</label>
+      <select id="regime">
+        <option value="omnivore">Omnivore</option>
+        <option value="vegetarien">Végétarien (+0,2 g/kg protéines)</option>
+        <option value="vegan">Vegan (+0,3 g/kg protéines)</option>
+        <option value="sans-gluten">Sans gluten</option>
+        <option value="keto">Keto / Low carb</option>
+      </select>
+    </div>
+  </div>
+  <button class="btn btn-g" onclick="calcAndGo()">Calculer mes besoins →</button>
+  <button class="btn btn-gh" onclick="goStep(1)">← Retour</button>
+</div>
+
+<!-- S3 -->
+<div class="screen" id="s3">
+  <p class="screen-title">Tes besoins caloriques</p>
+  <p class="screen-sub">Calculés via Harris-Benedict révisé · protéines calibrées par objectif.</p>
+  <div class="card">
+    <div class="kcal-hero"><span class="kcal-num" id="r-kcal">—</span><span class="kcal-unit">kcal / jour</span></div>
+    <div class="mpills">
+      <div class="mp p"><div class="mv" id="r-prot">—</div><div class="mn">Protéines (g)</div></div>
+      <div class="mp g"><div class="mv" id="r-gluc">—</div><div class="mn">Glucides (g)</div></div>
+      <div class="mp l"><div class="mv" id="r-lip">—</div><div class="mn">Lipides (g)</div></div>
+    </div>
+    <div class="bw">
+      <div class="bl"><span>Prot. <span id="pp">—</span>%</span><span>Gluc. <span id="gp">—</span>%</span><span>Lip. <span id="lp">—</span>%</span></div>
+      <div class="bt"><div id="bp" style="background:#378ADD;"></div><div id="bgb" style="background:#EF9F27;"></div><div id="blb" style="background:#D85A30;"></div></div>
+    </div>
+    <div class="bmr-r"><span>Métabolisme de base (BMR)</span><span id="r-bmr">—</span></div>
+    <div class="bmr-r" style="margin-top:6px;"><span>TDEE (avec activité)</span><span id="r-tdee" style="color:var(--green);">—</span></div>
+    <div class="snote" id="r-note"></div>
+  </div>
+  <div class="tags" id="r-tags"></div>
+  <button class="btn btn-g" onclick="goStep(4)">Voir mes recettes →</button>
+  <button class="btn btn-gh" onclick="goStep(2)">← Modifier</button>
+</div>
+
+<!-- S4 -->
+<div class="screen" id="s4">
+  <p class="screen-title">Recettes adaptées</p>
+  <p class="screen-sub" id="rec-sub">Sélectionnées selon ton objectif · macros estimées.</p>
+  <div class="frow" id="frow"></div>
+  <div id="recContainer"></div>
+  <button class="btn btn-g" onclick="afficherRecettes(false)" id="btnRegen" style="display:none;">Regénérer ↺</button>
+  <button class="btn btn-gh" onclick="goStep(3)">← Retour aux résultats</button>
+</div>
+
+<div class="footer">NutriPlan · Base de recettes intégrée · Formule Harris-Benedict · Ratios protéiques basés sur la littérature sportive</div>
+</div>
+
+<script>
+/* ── DATA ── */
+const DB = {
+  Poulet:[
+    {nom:"Poulet rôti aux herbes de Provence",emoji:"🍗",temps:"25 min",img:"https://images.unsplash.com/photo-1598103442097-8b74394b95c3?w=600&q=80",origine:"Français",ings:["Blanc de poulet — 200g","Huile d'olive — 1 càs","Thym, romarin — 1 càc","Ail — 2 gousses","Citron — ½","Sel, poivre"]},
+    {nom:"Wok de poulet aux légumes",emoji:"🥢",temps:"20 min",img:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80",origine:"Asiatique",ings:["Blanc de poulet — 180g","Brocoli — 150g","Carotte — 1","Sauce soja — 2 càs","Gingembre frais — 1 càc","Huile de sésame — 1 càs"]},
+    {nom:"Poulet mariné au citron et cumin",emoji:"🍋",temps:"20 min",img:"https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80",origine:"Méditerranéen",ings:["Escalope de poulet — 200g","Citron — 1","Cumin — 1 càc","Paprika — 1 càc","Ail — 2 gousses","Yaourt nature — 2 càs"]},
+    {nom:"Buddha bowl poulet grillé",emoji:"🥗",temps:"25 min",img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",origine:"Fusion",ings:["Poulet grillé — 150g","Riz complet cuit — 200g","Avocat — ½","Edamame — 80g","Concombre — ½","Sauce tahini — 1 càs"]},
+    {nom:"Poulet tikka masala",emoji:"🫕",temps:"30 min",img:"https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80",origine:"Indien",ings:["Blanc de poulet — 200g","Tomates pelées — 200g","Crème de coco — 100ml","Curry, curcuma — 1 càc","Oignon — 1","Gingembre — 1 càc"]},
+    {nom:"Salade César au poulet",emoji:"🥙",temps:"15 min",img:"https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&q=80",origine:"Américain",ings:["Blanc de poulet grillé — 150g","Laitue romaine — 150g","Parmesan — 25g","Croûtons — 30g","Sauce César — 2 càs"]},
+    {nom:"Poulet sauté à l'ail et persil",emoji:"🧄",temps:"15 min",img:"https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=80",origine:"Français",ings:["Blanc de poulet — 180g","Ail — 4 gousses","Persil frais — 1 bouquet","Beurre — 15g","Vin blanc — 50ml"]},
+    {nom:"Wrap poulet avocat",emoji:"🌯",temps:"10 min",img:"https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",origine:"Mexicain",ings:["Blanc de poulet émincé — 150g","Tortilla complète — 1","Avocat — ½","Laitue — 50g","Tomate — 1","Crème fraîche légère — 1 càs"]}
+  ],
+  Boeuf:[
+    {nom:"Steak haché patate douce",emoji:"🥩",temps:"25 min",img:"https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80",origine:"Fusion",ings:["Steak haché 5% MG — 200g","Patate douce — 200g","Oignon — 1","Paprika fumé — 1 càc","Huile d'olive — 1 càs","Persil — quelques feuilles"]},
+    {nom:"Bœuf sauté brocoli sauce huître",emoji:"🥦",temps:"20 min",img:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&q=80",origine:"Chinois",ings:["Bœuf en lanières — 180g","Brocoli — 200g","Sauce huître — 2 càs","Sauce soja — 1 càs","Ail — 2 gousses","Huile de sésame — 1 càc"]},
+    {nom:"Bowl bœuf riz brun",emoji:"🍚",temps:"20 min",img:"https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80",origine:"Japonais",ings:["Bœuf haché — 180g","Riz brun cuit — 200g","Sauce soja — 2 càs","Sucre — 1 càc","Gingembre — 1 càc","Oignon vert — 2 tiges"]},
+    {nom:"Tacos bœuf haché épicé",emoji:"🌮",temps:"20 min",img:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",origine:"Mexicain",ings:["Bœuf haché — 180g","Tortillas — 3","Cumin, chili — 1 càc","Tomate — 1","Fromage râpé — 30g","Coriandre fraîche"]},
+    {nom:"Steak quinoa légumes rôtis",emoji:"🌿",temps:"30 min",img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",origine:"Healthy",ings:["Steak de bœuf — 160g","Quinoa cuit — 180g","Courgette — 1","Poivron — 1","Huile d'olive — 1 càs","Herbes de Provence"]}
+  ],
+  Poisson:[
+    {nom:"Saumon grillé patates douces",emoji:"🐟",temps:"20 min",img:"https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",origine:"Nordique",ings:["Pavé de saumon — 180g","Patate douce — 200g","Citron — 1","Aneth frais — quelques brins","Huile d'olive — 1 càs","Sel, poivre"]},
+    {nom:"Thon riz brun sauce soja",emoji:"🍱",temps:"15 min",img:"https://images.unsplash.com/photo-1553621042-f6e147245754?w=600&q=80",origine:"Japonais",ings:["Thon au naturel — 160g","Riz brun cuit — 200g","Sauce soja — 2 càs","Sésame — 1 càc","Concombre — ½","Avocat — ½"]},
+    {nom:"Crevettes sautées ail et persil",emoji:"🦐",temps:"15 min",img:"https://images.unsplash.com/photo-1565680018093-ebb6b9ab5460?w=600&q=80",origine:"Méditerranéen",ings:["Crevettes décortiquées — 200g","Ail — 3 gousses","Persil — ½ bouquet","Huile d'olive — 2 càs","Vin blanc — 50ml","Citron — ½"]},
+    {nom:"Cabillaud vapeur légumes",emoji:"🐠",temps:"20 min",img:"https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",origine:"Français",ings:["Filet de cabillaud — 180g","Haricots verts — 150g","Carotte — 1","Citron — 1","Huile d'olive — 1 càs","Aneth"]},
+    {nom:"Poke bowl thon avocat",emoji:"🫙",temps:"15 min",img:"https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?w=600&q=80",origine:"Hawaïen",ings:["Thon frais — 150g","Riz à sushi — 200g","Avocat — ½","Edamame — 60g","Sauce soja — 2 càs","Sésame, algues nori"]}
+  ],
+  Pates:[
+    {nom:"Pâtes thon tomates",emoji:"🍝",temps:"15 min",img:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80",origine:"Italien",ings:["Pâtes complètes — 120g (cru)","Thon au naturel — 160g","Tomates cerises — 150g","Huile d'olive — 1 càs","Basilic frais","Parmesan — 25g"]},
+    {nom:"Penne poulet épinards",emoji:"🌿",temps:"20 min",img:"https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&q=80",origine:"Italien",ings:["Penne — 120g (cru)","Blanc de poulet — 150g","Épinards frais — 100g","Crème légère — 50ml","Ail — 2 gousses","Parmesan — 25g"]},
+    {nom:"Spaghetti boulettes viande",emoji:"🍝",temps:"30 min",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=600&q=80",origine:"Italien",ings:["Spaghetti — 120g (cru)","Bœuf haché — 180g","Tomates concassées — 200g","Oignon — 1","Ail — 2 gousses","Origan, basilic"]},
+    {nom:"Pasta au saumon fumé",emoji:"🐟",temps:"15 min",img:"https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=600&q=80",origine:"Nordique",ings:["Tagliatelles — 120g (cru)","Saumon fumé — 100g","Crème légère — 80ml","Aneth frais","Citron — ½","Câpres — 1 càs"]}
+  ],
+  Vegetarien:[
+    {nom:"Curry de lentilles corail",emoji:"🫘",temps:"25 min",img:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",origine:"Indien",ings:["Lentilles corail — 150g (cru)","Lait de coco — 200ml","Tomates — 200g","Oignon — 1","Curry, curcuma — 2 càc","Gingembre — 1 càc"]},
+    {nom:"Bowl quinoa légumes rôtis",emoji:"🥗",temps:"30 min",img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",origine:"Healthy",ings:["Quinoa — 100g (cru)","Patate douce — 150g","Courgette — 1","Pois chiches — 100g","Tahini — 1 càs","Jus de citron"]},
+    {nom:"Omelette épinards feta",emoji:"🥚",temps:"15 min",img:"https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80",origine:"Grec",ings:["Œufs — 3","Épinards frais — 100g","Feta — 50g","Lait — 2 càs","Huile d'olive — 1 càc","Sel, poivre"]},
+    {nom:"Tofu sauté brocoli sesame",emoji:"🌱",temps:"20 min",img:"https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",origine:"Asiatique",ings:["Tofu ferme — 200g","Brocoli — 200g","Sauce soja — 2 càs","Sésame — 1 càs","Ail — 2 gousses","Huile de sésame — 1 càc"]}
+  ],
+  Vegan:[
+    {nom:"Dal de lentilles vertes",emoji:"🫘",temps:"25 min",img:"https://images.unsplash.com/photo-1546548970-71785318a17b?w=600&q=80",origine:"Indien",ings:["Lentilles vertes — 150g (cru)","Tomates — 200g","Oignon — 1","Cumin, coriandre — 1 càc","Curcuma — ½ càc","Huile de coco — 1 càs"]},
+    {nom:"Bowl patate douce pois chiches",emoji:"🍠",temps:"30 min",img:"https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80",origine:"Healthy",ings:["Patate douce — 200g","Pois chiches — 150g","Épinards — 80g","Tahini — 1 càs","Citron — ½","Paprika fumé — 1 càc"]},
+    {nom:"Tofu mariné riz brun",emoji:"🌱",temps:"25 min",img:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80",origine:"Asiatique",ings:["Tofu ferme — 200g","Riz brun — 180g (cuit)","Sauce soja — 2 càs","Gingembre — 1 càc","Brocoli — 100g","Sésame — 1 càs"]}
+  ],
+  Keto:[
+    {nom:"Steak œufs au plat beurre",emoji:"🥩",temps:"15 min",img:"https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",origine:"Américain",ings:["Entrecôte — 200g","Œufs — 2","Beurre — 20g","Ail — 1 gousse","Thym — quelques brins","Sel, poivre"]},
+    {nom:"Saumon avocat salade",emoji:"🥑",temps:"10 min",img:"https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",origine:"Nordique",ings:["Saumon fumé — 150g","Avocat — 1","Laitue — 100g","Citron — 1","Huile d'olive — 2 càs","Aneth"]},
+    {nom:"Poulet lardons courgettes",emoji:"🍗",temps:"25 min",img:"https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80",origine:"Français",ings:["Blanc de poulet — 200g","Lardons — 50g","Courgette — 2","Crème fraîche — 50ml","Ail — 2 gousses","Herbes de Provence"]}
+  ]
+};
+
+const MACROS = {
+  Poulet:     {kcal:520,p:52,g:35,l:18},
+  Boeuf:      {kcal:620,p:48,g:30,l:28},
+  Poisson:    {kcal:420,p:45,g:25,l:14},
+  Pates:      {kcal:580,p:28,g:75,l:16},
+  Vegetarien: {kcal:450,p:22,g:60,l:14},
+  Vegan:      {kcal:380,p:16,g:58,l:10},
+  Keto:       {kcal:580,p:48,g:5,l:42},
+};
+
+const CATS_BY_OBJ = {
+  masse:       ['Poulet','Boeuf','Poisson','Pates'],
+  perte:       ['Poisson','Poulet','Vegetarien','Vegan'],
+  maintenance: ['Poulet','Boeuf','Poisson','Pates'],
+  performance: ['Poulet','Poisson','Pates','Vegetarien'],
+  vegetarien:  ['Vegetarien','Vegan','Pates'],
+  vegan:       ['Vegan','Vegetarien'],
+  keto:        ['Keto','Poulet','Boeuf'],
+};
+
+const RATIOS = {
+  perte:       {base:1.9,label:'1,6–2,4 g/kg — déficit calorique',delta:-500},
+  masse:       {base:2.0,label:'1,8–2,2 g/kg — anabolisme musculaire',delta:300},
+  maintenance: {base:1.6,label:'1,4–1,8 g/kg — maintien musculaire',delta:0},
+  performance: {base:1.4,label:'1,2–1,6 g/kg — récupération optimale',delta:200},
+};
+const RB = {vegetarien:.2,vegan:.3};
+const OL = {perte:'Perte de poids',masse:'Prise de masse',maintenance:'Maintenance',performance:'Performance'};
+
+let ud={}, curCat='';
+
+document.querySelectorAll('.rcard').forEach(c=>{
+  c.addEventListener('click',function(){
+    const n=this.querySelector('input').name;
+    document.querySelectorAll(`input[name="${n}"]`).forEach(r=>r.closest('.rcard').classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+
+function goStep(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  ['tab1','tab2','tab3','tab4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.classList.remove('active','done');
+    if(i+1===n) el.classList.add('active');
+    if(i+1<n)  el.classList.add('done');
+  });
+  if(n===4) afficherRecettes(true);
+}
+
+function calcAndGo(){
+  const prenom  =document.getElementById('prenom').value.trim()||'Sportif';
+  const age     =parseFloat(document.getElementById('age').value);
+  const poids   =parseFloat(document.getElementById('poids').value);
+  const taille  =parseFloat(document.getElementById('taille').value);
+  const sexe    =document.querySelector('input[name="sexe"]:checked').value;
+  const activite=parseFloat(document.querySelector('input[name="activite"]:checked').value);
+  const objectif=document.querySelector('input[name="objectif"]:checked').value;
+  const regime  =document.getElementById('regime').value;
+  if(!age||!poids||!taille){alert('Merci de renseigner ton âge, ton poids et ta taille.');return;}
+  const bmr=sexe==='homme'?88.362+13.397*poids+4.799*taille-5.677*age:447.593+9.247*poids+3.098*taille-4.330*age;
+  const tdee=bmr*activite;
+  const ratio=RATIOS[objectif];
+  const bonus=RB[regime]||0;
+  const pr=ratio.base+bonus;
+  const total=Math.round(tdee+ratio.delta);
+  const prot=Math.round(poids*pr);
+  const lip=Math.round(total*.25/9);
+  const gluc=Math.max(0,Math.round((total-prot*4-lip*9)/4));
+  const pPct=Math.round((prot*4/total)*100);
+  const gPct=Math.max(0,Math.round((gluc*4/total)*100));
+  const lPct=Math.round((lip*9/total)*100);
+  document.getElementById('r-kcal').textContent=total.toLocaleString('fr-FR');
+  document.getElementById('r-prot').textContent=prot;
+  document.getElementById('r-gluc').textContent=gluc;
+  document.getElementById('r-lip').textContent=lip;
+  document.getElementById('pp').textContent=pPct;
+  document.getElementById('gp').textContent=gPct;
+  document.getElementById('lp').textContent=lPct;
+  document.getElementById('bp').style.width=pPct+'%';
+  document.getElementById('bgb').style.width=gPct+'%';
+  document.getElementById('blb').style.width=lPct+'%';
+  document.getElementById('r-bmr').textContent=Math.round(bmr).toLocaleString('fr-FR')+' kcal';
+  document.getElementById('r-tdee').textContent=Math.round(tdee).toLocaleString('fr-FR')+' kcal';
+  document.getElementById('r-note').textContent=`Ratio : ${pr.toFixed(1)} g/kg/j · Recommandation : ${ratio.label}`+(bonus>0?` · +${bonus} g/kg (${regime})`:'');
+  document.getElementById('r-tags').innerHTML=[OL[objectif],regime,pr.toFixed(1)+' g prot./kg'].map(t=>`<span class="tag">${t}</span>`).join('');
+  ud={prenom,age,poids,taille,sexe,activite,objectif,regime,total,prot,gluc,lip,bmr:Math.round(bmr),pr};
+  goStep(3);
+}
+
+function getCats(){
+  const r=ud.regime||'omnivore';
+  if(r==='vegan') return CATS_BY_OBJ.vegan;
+  if(r==='vegetarien') return CATS_BY_OBJ.vegetarien;
+  if(r==='keto') return CATS_BY_OBJ.keto;
+  return CATS_BY_OBJ[ud.objectif]||CATS_BY_OBJ.maintenance;
+}
+
+function buildFilters(){
+  const cats=getCats();
+  curCat=cats[0];
+  document.getElementById('frow').innerHTML=cats.map((c,i)=>
+    `<button class="fbtn${i===0?' act':''}" onclick="selectCat('${c}',this)">${c}</button>`
+  ).join('');
+}
+
+function selectCat(cat,btn){
+  curCat=cat;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  afficherRecettes(false);
+}
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5);}
+
+function afficherRecettes(rebuild){
+  document.getElementById('rec-sub').textContent=
+    `${ud.total?.toLocaleString('fr-FR')||'—'} kcal/j · ${ud.prot||'—'} g protéines · ${ud.regime||'—'}`;
+  if(rebuild) buildFilters();
+  const container=document.getElementById('recContainer');
+  const btnR=document.getElementById('btnRegen');
+  container.innerHTML='';
+  btnR.style.display='block';
+  const pool=DB[curCat]||[];
+  const selected=shuffle(pool).slice(0,3);
+  const m=MACROS[curCat]||{kcal:480,p:30,g:45,l:18};
+  selected.forEach(r=>{
+    const card=document.createElement('div');
+    card.className='rc';
+    card.innerHTML=`
+      <img class="rc-img" src="${r.img}" alt="${r.nom}" loading="lazy" onerror="this.style.background='var(--green-light)'"/>
+      <div class="rc-body">
+        <div class="rc-top">
+          <div><div class="rc-name">${r.emoji} ${r.nom}</div><div class="rc-meta">⏱ ${r.temps} · ${r.origine}</div></div>
+          <div class="rc-kcal">~${m.kcal} kcal</div>
+        </div>
+        <div class="est">Macros estimées · 1 portion</div>
+        <div class="rc-macros">
+          <div class="rm"><strong>${m.p}g</strong> prot.</div>
+          <div class="rm" style="color:var(--border-strong);">·</div>
+          <div class="rm"><strong>${m.g}g</strong> gluc.</div>
+          <div class="rm" style="color:var(--border-strong);">·</div>
+          <div class="rm"><strong>${m.l}g</strong> lip.</div>
+        </div>
+        <div class="ing-s">
+          <div class="ing-l">Ingrédients</div>
+          <div class="ings">${r.ings.map(i=>`<span class="ing">${i}</span>`).join('')}</div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>
